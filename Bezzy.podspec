@@ -7,7 +7,7 @@
 Pod::Spec.new do |s|
   s.name                    = "Bezzy"
   s.version                 = "0.1.0"
-  s.summary                 = "Bezzy provides a simple way to build bezier paths using a psuedo-DSL."
+  s.summary                 = "Bezzy provides a simple way to build bézier paths using a psuedo-DSL."
   s.homepage                = "https://github.com/dclelland/Bezzy"
   s.license                 = { :type => 'MIT' }
   s.author                  = { "Daniel Clelland" => "daniel.clelland@gmail.com" }
