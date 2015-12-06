@@ -180,6 +180,114 @@ public extension PathMaker {
 
 public extension PathMaker {
     
+    // MARK: Paths
+    
+    /// Appends `path` to the path.
+    public func path(path: UIBezierPath) -> PathMaker {
+        path.appendPath(path)
+        return self
+    }
+    
+}
+
+public extension PathMaker {
+    
+    // MARK: Rects
+    
+    /// Appends a rectangular path with `rect` to the path.
+    public func rect(rect: CGRect) -> PathMaker {
+        path.appendPath(UIBezierPath(rect: rect))
+        return self
+    }
+    
+    /// Appends a rectangular path with `origin` and `size` to the path.
+    public func rect(origin origin: CGPoint, size: CGSize) -> PathMaker {
+        return rect(CGRect(origin: origin, size: size))
+    }
+    
+    /// Appends a rectangular path with `x`, `y`, `width` and `height` to the path.
+    public func rect(x x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> PathMaker {
+        return rect(CGRect(x: x, y: y, width: width, height: height))
+    }
+    
+    /// Appends a rectangular path with `center` and `radius` to the path.
+    public func rect(at center: CGPoint, radius: CGFloat) -> PathMaker {
+        return rect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
+    }
+    
+    /// Appends a rectangular path with `center` and `size` to the path.
+    public func rect(at center: CGPoint, size: CGSize) -> PathMaker {
+        return rect(x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
+    }
+    
+}
+
+public extension PathMaker {
+    
+    // MARK: Ovals
+    
+    /// Appends an ellipsoid path with `rect` to the path.
+    public func oval(rect: CGRect) -> PathMaker {
+        path.appendPath(UIBezierPath(ovalInRect: rect))
+        return self
+    }
+    
+    /// Appends an ellipsoid path with `origin` and `size` to the path.
+    public func oval(origin origin: CGPoint, size: CGSize) -> PathMaker {
+        return oval(CGRect(origin: origin, size: size))
+    }
+    
+    /// Appends an ellipsoid path with `x`, `y`, `width` and `height` to the path.
+    public func oval(x x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> PathMaker {
+        return oval(CGRect(x: x, y: y, width: width, height: height))
+    }
+    
+    /// Appends an ellipsoid path with `center` and `radius` to the path.
+    public func oval(at center: CGPoint, radius: CGFloat) -> PathMaker {
+        return oval(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
+    }
+    
+    /// Appends an ellipsoid path with `center` and `size` to the path.
+    public func oval(at center: CGPoint, size: CGSize) -> PathMaker {
+        return oval(x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
+    }
+    
+}
+
+public extension PathMaker {
+    
+    // MARK: Rounded rects
+    
+    /// Appends a rounded rectangular path with `rect` and `cornerRadius` to the path.
+    public func roundedRect(rect: CGRect, cornerRadius: CGFloat) -> PathMaker {
+        path.appendPath(UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius))
+        return self
+    }
+    
+    /// Appends a rounded rectangular path with `origin`, `size` and `cornerRadius` to the path.
+    public func roundedRect(origin origin: CGPoint, size: CGSize, cornerRadius: CGFloat) -> PathMaker {
+        return roundedRect(CGRect(origin: origin, size: size), cornerRadius: cornerRadius)
+    }
+    
+    /// Appends a rounded rectangular path with `x`, `y`, `width`, `height` and `cornerRadius` to the path.
+    public func roundedRect(x x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, cornerRadius: CGFloat) -> PathMaker {
+        return roundedRect(CGRect(x: x, y: y, width: width, height: height), cornerRadius: cornerRadius)
+    }
+    
+    /// Appends a rounded rectangular path with `center`, `radius` and `cornerRadius` to the path.
+    public func roundedRect(at center: CGPoint, radius: CGFloat, cornerRadius: CGFloat) -> PathMaker {
+        return roundedRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2, cornerRadius: cornerRadius)
+    }
+    
+    /// Appends a rounded rectangular path with `center` and `size` and `cornerRadius` to the path.
+    public func roundedRect(at center: CGPoint, size: CGSize, cornerRadius: CGFloat) -> PathMaker {
+        return roundedRect(x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height, cornerRadius: cornerRadius)
+    }
+    
+}
+
+public extension PathMaker {
+    
     // MARK: Transforms
     
     /// Apply `transform` to the path.
@@ -191,28 +299,28 @@ public extension PathMaker {
     // MARK: Translations
     
     /// Translate the path by the vector defined by `tx` and rightwards by `ty`.
-    public func translate(tx tx: CGFloat, ty: CGFloat) -> PathMaker {
+    public func translation(tx tx: CGFloat, ty: CGFloat) -> PathMaker {
         return transform(CGAffineTransformMakeTranslation(tx, ty))
     }
     
     /// Translate the path upwards by amount `distance`.
-    public func translate(up distance: CGFloat) -> PathMaker {
-        return translate(tx: 0, ty: -distance)
+    public func translation(up distance: CGFloat) -> PathMaker {
+        return translation(tx: 0, ty: -distance)
     }
     
     /// Translate the path leftwards by amount `distance`.
-    public func translate(left distance: CGFloat) -> PathMaker {
-        return translate(tx: -distance, ty: 0)
+    public func translation(left distance: CGFloat) -> PathMaker {
+        return translation(tx: -distance, ty: 0)
     }
     
     /// Translate the path downwards by amount `distance`.
-    public func translate(down distance: CGFloat) -> PathMaker {
-        return translate(tx: 0, ty: distance)
+    public func translation(down distance: CGFloat) -> PathMaker {
+        return translation(tx: 0, ty: distance)
     }
     
     /// Translate the path rightwards by amount `distance`.
-    public func translate(right distance: CGFloat) -> PathMaker {
-        return translate(tx: distance, ty: 0)
+    public func translation(right distance: CGFloat) -> PathMaker {
+        return translation(tx: distance, ty: 0)
     }
     
     // MARK: Scaling
@@ -248,114 +356,6 @@ public extension PathMaker {
     public func rotation(anticlockwise angle: CGFloat) -> PathMaker {
         return rotation(-angle)
     }
-}
-
-public extension PathMaker {
-    
-    // MARK: Paths
-    
-    /// Appends `path` to the path.
-    public func path(path: UIBezierPath) -> PathMaker {
-        path.appendPath(path)
-        return self
-    }
-    
-}
-
-public extension PathMaker {
-    
-    // MARK: Rects
-    
-    /// Appends a rectangular path with `rect` to the path.
-    public func rect(rect: CGRect) -> PathMaker {
-        path.appendPath(UIBezierPath(rect: rect))
-        return self
-    }
-    
-    /// Appends a rectangular path with `origin` and `size` to the path.
-    public func rect(origin: CGPoint, size: CGSize) -> PathMaker {
-        return rect(CGRect(origin: origin, size: size))
-    }
-    
-    /// Appends a rectangular path with `x`, `y`, `width` and `height` to the path.
-    public func rect(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> PathMaker {
-        return rect(CGRect(x: x, y: y, width: width, height: height))
-    }
-    
-    /// Appends a rectangular path with `center` and `radius` to the path.
-    public func rect(at center: CGPoint, radius: CGFloat) -> PathMaker {
-        return rect(center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
-    }
-    
-    /// Appends a rectangular path with `center` and `size` to the path.
-    public func rect(at center: CGPoint, size: CGSize) -> PathMaker {
-        return rect(center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
-    }
-    
-}
-
-public extension PathMaker {
-    
-    // MARK: Ovals
-    
-    /// Appends an ellipsoid path with `rect` to the path.
-    public func oval(rect: CGRect) -> PathMaker {
-        path.appendPath(UIBezierPath(ovalInRect: rect))
-        return self
-    }
-    
-    /// Appends an ellipsoid path with `origin` and `size` to the path.
-    public func oval(origin: CGPoint, size: CGSize) -> PathMaker {
-        return oval(CGRect(origin: origin, size: size))
-    }
-    
-    /// Appends an ellipsoid path with `x`, `y`, `width` and `height` to the path.
-    public func oval(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) -> PathMaker {
-        return oval(CGRect(x: x, y: y, width: width, height: height))
-    }
-    
-    /// Appends an ellipsoid path with `center` and `radius` to the path.
-    public func oval(at center: CGPoint, radius: CGFloat) -> PathMaker {
-        return oval(center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
-    }
-    
-    /// Appends an ellipsoid path with `center` and `size` to the path.
-    public func oval(at center: CGPoint, size: CGSize) -> PathMaker {
-        return oval(center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
-    }
-    
-}
-
-public extension PathMaker {
-    
-    // MARK: Rounded rects
-    
-    /// Appends a rounded rectangular path with `rect` and `cornerRadius` to the path.
-    public func roundedRect(rect: CGRect, cornerRadius: CGFloat) -> PathMaker {
-        path.appendPath(UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius))
-        return self
-    }
-    
-    /// Appends a rounded rectangular path with `origin`, `size` and `cornerRadius` to the path.
-    public func roundedRect(origin: CGPoint, size: CGSize, cornerRadius: CGFloat) -> PathMaker {
-        return roundedRect(CGRect(origin: origin, size: size), cornerRadius: cornerRadius)
-    }
-    
-    /// Appends a rounded rectangular path with `x`, `y`, `width`, `height` and `cornerRadius` to the path.
-    public func roundedRect(x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, cornerRadius: CGFloat) -> PathMaker {
-        return roundedRect(CGRect(x: x, y: y, width: width, height: height), cornerRadius: cornerRadius)
-    }
-    
-    /// Appends a rounded rectangular path with `center`, `radius` and `cornerRadius` to the path.
-    public func roundedRect(at center: CGPoint, radius: CGFloat, cornerRadius: CGFloat) -> PathMaker {
-        return roundedRect(center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2, cornerRadius: cornerRadius)
-    }
-    
-    /// Appends a rounded rectangular path with `center` and `size` and `cornerRadius` to the path.
-    public func roundedRect(at center: CGPoint, size: CGSize, cornerRadius: CGFloat) -> PathMaker {
-        return roundedRect(center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height, cornerRadius: cornerRadius)
-    }
-    
 }
 
 public extension PathMaker {
