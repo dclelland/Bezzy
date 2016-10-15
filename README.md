@@ -1,6 +1,6 @@
 # Bezzy
 
-Bezzy is a collection of simple helper methods for building UIBezierPaths.
+Bezzy is a collection of simple helpers for building UIBezierPaths.
 
 Swift port of my old [UIBezierPath+DSL](https://github.com/dclelland/UIBezierPath-DSL) Cocoapod.
 
