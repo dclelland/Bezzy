@@ -1,39 +1,42 @@
 # Bezzy
 
-Bezzy provides a simple way to build bézier paths using a psuedo-DSL.
+Bezzy is a collection of simple helper methods for building UIBezierPaths.
 
-Inspired by [SnapKit](https://github.com/SnapKit/SnapKit) and [TurtleBezierPath](https://github.com/mindbrix/TurtleBezierPath). Swift port of my [UIBezierPath+DSL](https://github.com/dclelland/UIBezierPath-DSL) Cocoapod.
+Swift port of my old [UIBezierPath+DSL](https://github.com/dclelland/UIBezierPath-DSL) Cocoapod.
 
-✓ Supports relative positioning.
+✓ Movements (with support for positioning relative to `currentPoint`)
 
 ```swift
-let path = UIBezierPath.makePath { make in
-    make.move(x: 0.5, y: 0.5)
-    make.line(up: 0.5)
-    make.line(right: 0.5)
-    make.line(down: 0.5)
-    make.line(left: 1.0)
-    make.line(down: 0.5)
-    make.line(right: 0.5)
-    make.closed()
+let path = UIBezierPath { path in
+    path.add(.move, x: 0.5, y: 0.5)
+    path.add(.line, 0.5, .up)
+    path.add(.line, 0.5, .right)
+    path.add(.line, 0.5, .down)
+    path.add(.line, 1.0, .left)
+    path.add(.line, 0.5, .down)
+    path.add(.line, 0.5, .right)
+    path.close()
 }
 ```
 
-✓ Supports transformations.
+✓ Shapes
 
 ```swift
-let path = UIBezierPath.makePath { make in
-    make.oval(x: 0.0, y: 0.0, width: 1.0, height: 1.0)
-    make.scale(sx: 20.0, sy: 20.0)
-    make.translation(tx: 10.0, ty: 10.0)
+let path = UIBezierPath { path in
+    path.add(.rect, at: CGRect(x: 0.5, y: 0.5, width: 10.0, height: 20.0))
+    path.add(.oval, center: CGPoint(x: 0.5, y: 0.5), radius: 20.0)
+    path.add(.roundedRect(cornerRadius: 4.0), center: CGPoint(x: 0.5, y: 0.5), size: CGSize(width: 40.0, height: 20.0))
 }
 ```
 
-✓ Supports function chaining.
+✓ Transformations
 
 ```swift
-let path = UIBezierPath.makePath { make in
-    make.move(x: 0.0, y: 0.5).line(x: 0.5, y: 0.0).line(x: 1.0, y: 0.5).line(x: 0.5, y: 1.0).close()
+let path = UIBezierPath { path in
+    path.add(.oval, x: 0.0, y: 0.0, width: 1.0, height: 1.0)
+    path.scale(0.5, .horizontal)
+    path.rotate(45 * .pi / 180, .anticlockwise)
+    path.translate(50.0, .right)
 }
 ```
 
@@ -43,83 +46,30 @@ UIBezierPath
 
 ```swift
 // Constructors
-class func makePath(closure: (make: PathMaker) -> Void) -> UIBezierPath
-func makePath(closure: (make: PathMaker) -> Void) -> UIBezierPath
-```
+init(_ closure: (UIBezierPath) -> Void)
+static func make(_ path: UIBezierPath, _ closure: (UIBezierPath) -> Void) -> UIBezierPath
 
-PathMaker
+// Movements
+func add(_ movement: Movement, to point: CGPoint)
+func add(_ movement: Movement, x: CGFloat, y: CGFloat)
+func add(_ movement: Movement, dx: CGFloat, dy: CGFloat)
+func add(_ movement: Movement, r: CGFloat, θ: CGFloat)
+func add(_ movement: Movement, _ r: CGFloat, _ direction: Direction)
 
-```swift
-// Moves
-func move(point: CGPoint)
-func move(x x: CGFloat, y: CGFloat)
-func move(dx dx: CGFloat, dy: CGFloat)
-func move(distance: CGFloat, direction: CGFloat)
-func move(up distance: CGFloat)
-func move(left distance: CGFloat)
-func move(down distance: CGFloat)
-func move(right distance: CGFloat)
-
-// Lines
-func line(point: CGPoint)
-func line(x x: CGFloat, y: CGFloat)
-func line(dx dx: CGFloat, dy: CGFloat)
-func line(distance: CGFloat, direction: CGFloat)
-func line(up distance: CGFloat)
-func line(left distance: CGFloat)
-func line(down distance: CGFloat)
-func line(right distance: CGFloat)
-
-// Arcs
-func arc(center: CGPoint, radius: CGFloat, startAngle: CGFloat, endAngle: CGFloat, clockwise: Bool)
-
-// Curves
-func curve(point: CGPoint, controlPoint1: CGPoint, controlPoint2: CGPoint)
-
-// Quad curves
-func quadCurve(point: CGPoint, controlPoint: CGPoint)
-
-// Paths
-func path(path: UIBezierPath)
-
-// Rects
-func rect(rect: CGRect)
-func rect(origin origin: CGPoint, size: CGSize)
-func rect(x x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)
-func rect(at center: CGPoint, radius: CGFloat)
-func rect(at center: CGPoint, size: CGSize)
-
-// Ovals
-func oval(rect: CGRect)
-func oval(origin origin: CGPoint, size: CGSize)
-func oval(x x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)
-func oval(at center: CGPoint, radius: CGFloat)
-func oval(at center: CGPoint, size: CGSize)
-
-// Rounded rects
-func roundedRect(rect: CGRect, cornerRadius: CGFloat)
-func roundedRect(origin origin: CGPoint, size: CGSize, cornerRadius: CGFloat)
-func roundedRect(x x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, cornerRadius: CGFloat)
-func roundedRect(at center: CGPoint, radius: CGFloat, cornerRadius: CGFloat)
-func roundedRect(at center: CGPoint, size: CGSize, cornerRadius: CGFloat)
+// Shapes
+func add(_ shape: Shape, at rect: CGRect)
+func add(_ shape: Shape, origin: CGPoint, size: CGSize)
+func add(_ shape: Shape, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat)
+func add(_ shape: Shape, center: CGPoint, radius: CGFloat)
+func add(_ shape: Shape, center: CGPoint, size: CGSize)
 
 // Transforms
-func transform(transform: CGAffineTransform)
-func translation(tx tx: CGFloat, ty: CGFloat)
-func translation(up distance: CGFloat)
-func translation(left distance: CGFloat)
-func translation(down distance: CGFloat)
-func translation(right distance: CGFloat)
-func scale(sx sx: CGFloat, sy: CGFloat)
-func scale(horizontally ratio: CGFloat)
-func scale(vertically ratio: CGFloat)
-func rotation(angle: CGFloat)
-func rotation(clockwise angle: CGFloat)
-func rotation(anticlockwise angle: CGFloat)
-
-// Closure
-func close()
-func closed()
+func translate(tx: CGFloat, ty: CGFloat)
+func translate(r: CGFloat, θ: CGFloat)
+func translate(_ r: CGFloat, _ direction: Direction)
+func scale(sx: CGFloat, sy: CGFloat)
+func scale(_ ratio: CGFloat, _ axis: Axis)
+func rotate(_ angle: CGFloat, _ motion: Motion = .clockwise)
 ```
 
 ### Wishlist/API ideas
