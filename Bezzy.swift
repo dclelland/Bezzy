@@ -70,6 +70,16 @@ public extension UIBezierPath {
         case roundedRect(cornerRadius: CGFloat)
     }
     
+    /// Specifies an open or closed path.
+    enum Path {
+        
+        /// An open path.
+        case open
+        
+        /// A closed path.
+        case closed
+    }
+    
     /// Specifies a path operation along a given axis.
     enum Axis {
         
@@ -156,22 +166,46 @@ public extension UIBezierPath {
     
     /// Add a rect with `origin` and `size`.
     public func add(_ shape: Shape, origin: CGPoint, size: CGSize) {
-        return add(shape, at: CGRect(origin: origin, size: size))
+        add(shape, at: CGRect(origin: origin, size: size))
     }
     
     /// Add a rect with `x`, `y`, `width` and `height`.
     public func add(_ shape: Shape, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) {
-        return add(shape, at: CGRect(x: x, y: y, width: width, height: height))
+        add(shape, at: CGRect(x: x, y: y, width: width, height: height))
     }
     
     /// Add a rect with `center` and `radius`.
     public func add(_ shape: Shape, center: CGPoint, radius: CGFloat) {
-        return add(shape, x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
+        add(shape, x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
     }
     
     /// Add a rect with `center` and `size`.
     public func add(_ shape: Shape, center: CGPoint, size: CGSize) {
-        return add(shape, x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
+        add(shape, x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
+    }
+    
+}
+
+// MARK: - Paths
+
+public extension UIBezierPath {
+    
+    /// Add a list of points as a path.
+    public func add(_ path: Path, points: [CGPoint]) {
+        let head = points.first
+        let tail = points.suffix(from: 1)
+        
+        if let head = head {
+            add(.move, to: head)
+        }
+        
+        for point in tail {
+            add(.line, to: point)
+        }
+        
+        if path == .closed {
+            close()
+        }
     }
     
 }
@@ -212,7 +246,7 @@ public extension UIBezierPath {
     
     /// Scales the path horizontally by `sx` and vertically by `sy`.
     public func scale(sx: CGFloat, sy: CGFloat) {
-        return apply(CGAffineTransform(scaleX: sx, y: sy))
+        apply(CGAffineTransform(scaleX: sx, y: sy))
     }
     
     /// Scales the path along the specified `axis` by `ratio`.
