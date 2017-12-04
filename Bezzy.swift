@@ -8,19 +8,25 @@
 
 import Foundation
 
+#if os(iOS)
+    public typealias BezierPath = UIBezierPath
+#elseif os(OSX)
+    public typealias BezierPath = NSBezierPath
+#endif
+
 // MARK: Initialization
 
-public extension UIBezierPath {
+public extension BezierPath {
     
     /// Initialize a new bezier path using a closure.
-    convenience init(_ closure: (UIBezierPath) -> Void) {
+    convenience init(_ closure: (BezierPath) -> Void) {
         self.init()
         closure(self)
     }
     
     /// Create a new bezier path using a copy of an existing one and a closure.
-    static func make(_ path: UIBezierPath, _ closure: (UIBezierPath) -> Void) -> UIBezierPath {
-        let copy = path.copy() as! UIBezierPath
+    static func make(_ path: BezierPath, _ closure: (BezierPath) -> Void) -> BezierPath {
+        let copy = path.copy() as! BezierPath
         closure(copy)
         return copy
     }
@@ -29,7 +35,7 @@ public extension UIBezierPath {
 
 // MARK: - Enums
 
-public extension UIBezierPath {
+public extension BezierPath {
     
     /// Specifies a path operation in a given direction.
     enum Direction {
@@ -105,16 +111,25 @@ public extension UIBezierPath {
 
 // MARK: - Movement
 
-public extension UIBezierPath {
+public extension BezierPath {
     
     /// Add a movement to a location defined by `point`.
     public func add(_ movement: Movement, to point: CGPoint) {
-        switch movement {
-        case .move:
-            move(to: point)
-        case .line:
-            addLine(to: point)
-        }
+        #if os(iOS)
+            switch movement {
+            case .move:
+                move(to: point)
+            case .line:
+                addLine(to: point)
+            }
+        #elseif os(OSX)
+            switch movement {
+            case .move:
+                move(to: point)
+            case .line:
+                line(to: point)
+            }
+        #endif
     }
     
     /// Add a movement to the point defined by `x` and `y`.
@@ -150,18 +165,29 @@ public extension UIBezierPath {
 
 // MARK: - Shape
 
-public extension UIBezierPath {
+public extension BezierPath {
     
     /// Add a shape at a location defined by `rect`.
     public func add(_ shape: Shape, at rect: CGRect) {
-        switch shape {
-        case .rect:
-            append(UIBezierPath(rect: rect))
-        case .oval:
-            append(UIBezierPath(ovalIn: rect))
-        case .roundedRect(let cornerRadius):
-            append(UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius))
-        }
+        #if os(iOS)
+            switch shape {
+            case .rect:
+                append(UIBezierPath(rect: rect))
+            case .oval:
+                append(UIBezierPath(ovalIn: rect))
+            case .roundedRect(let cornerRadius):
+                append(UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius))
+            }
+        #elseif os(OSX)
+            switch shape {
+            case .rect:
+                append(BezierPath(rect: rect))
+            case .oval:
+                append(BezierPath(ovalIn: rect))
+            case .roundedRect(let cornerRadius):
+                append(BezierPath(roundedRect: rect, xRadius: cornerRadius, yRadius: cornerRadius))
+            }
+        #endif
     }
     
     /// Add a rect with `origin` and `size`.
@@ -188,7 +214,7 @@ public extension UIBezierPath {
 
 // MARK: - Paths
 
-public extension UIBezierPath {
+public extension BezierPath {
     
     /// Add a list of points as a path.
     public func add(_ path: Path, points: [CGPoint]) {
@@ -212,11 +238,15 @@ public extension UIBezierPath {
 
 // MARK: - Translate
 
-public extension UIBezierPath {
+public extension BezierPath {
     
     /// Translate the path rightwards by `tx` and downwards by `ty`.
     public func translate(tx: CGFloat, ty: CGFloat) {
-        apply(CGAffineTransform(translationX: tx, y: ty))
+        #if os(iOS)
+            apply(CGAffineTransform(translationX: tx, y: ty))
+        #elseif os(OSX)
+            transform(using: AffineTransform(translationByX: tx, byY: ty))
+        #endif
     }
     
     /// Translate the path by the polar coordinates defined by `r` and `θ`.
@@ -242,11 +272,15 @@ public extension UIBezierPath {
 
 // MARK: - Scale
 
-public extension UIBezierPath {
+public extension BezierPath {
     
     /// Scales the path horizontally by `sx` and vertically by `sy`.
     public func scale(sx: CGFloat, sy: CGFloat) {
-        apply(CGAffineTransform(scaleX: sx, y: sy))
+        #if os(iOS)
+            apply(CGAffineTransform(scaleX: sx, y: sy))
+        #elseif os(OSX)
+            transform(using: AffineTransform(scaleByX: sx, byY: sy))
+        #endif
     }
     
     /// Scales the path along the specified `axis` by `ratio`.
@@ -263,16 +297,25 @@ public extension UIBezierPath {
 
 // MARK: - Rotate
 
-public extension UIBezierPath {
+public extension BezierPath {
     
     /// Rotate the path in the specified directional `motion` for `angle` (radians).
     public func rotate(_ angle: CGFloat, _ motion: Motion = .clockwise) {
-        switch motion {
-        case .clockwise:
-            apply(CGAffineTransform(rotationAngle: angle))
-        case .anticlockwise:
-            apply(CGAffineTransform(rotationAngle: -angle))
-        }
+        #if os(iOS)
+            switch motion {
+            case .clockwise:
+                apply(CGAffineTransform(rotationAngle: angle))
+            case .anticlockwise:
+                apply(CGAffineTransform(rotationAngle: -angle))
+            }
+        #elseif os(OSX)
+            switch motion {
+            case .clockwise:
+                transform(using: AffineTransform(rotationByRadians: angle))
+            case .anticlockwise:
+                transform(using: AffineTransform(rotationByRadians: angle))
+            }
+        #endif
     }
     
 }
