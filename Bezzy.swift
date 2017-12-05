@@ -12,9 +12,9 @@ import Foundation
     
     public typealias BezierPath = UIBezierPath
     
-    public typealias Point = Point
+    public typealias Point = CGPoint
     
-    public typealias Rect = Rect
+    public typealias Rect = CGRect
     
 #elseif os(OSX)
     
