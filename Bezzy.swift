@@ -9,9 +9,21 @@
 import Foundation
 
 #if os(iOS)
+    
     public typealias BezierPath = UIBezierPath
+    
+    public typealias Point = Point
+    
+    public typealias Rect = Rect
+    
 #elseif os(OSX)
+    
     public typealias BezierPath = NSBezierPath
+    
+    public typealias Point = NSPoint
+    
+    public typealias Rect = NSRect
+    
 #endif
 
 // MARK: Initialization
@@ -62,19 +74,11 @@ public extension BezierPath {
         /// Move the current point, adding a line in the process.
         case line
         
-        #if os(iOS)
-            /// Move the current point, adding a quadratic Bézier curve in the process.
-            case quadraticCurve(p1: CGPoint)
+        /// Move the current point, adding a quadratic Bézier curve in the process.
+        case quadCurve(p1: Point)
         
-            /// Move the current point, adding a cubic Bézier curve in the process.
-            case cubicCurve(p1: CGPoint, p2: CGPoint)
-        #elseif os(OSX)
-            /// Move the current point, adding a quadratic Bézier curve in the process.
-            case quadraticCurve(p1: NSPoint)
-        
-            /// Move the current point, adding a cubic Bézier curve in the process.
-            case cubicCurve(p1: NSPoint, p2: NSPoint)
-        #endif
+        /// Move the current point, adding a cubic Bézier curve in the process.
+        case cubicCurve(p1: Point, p2: Point)
     }
     
     /// Specifies a type of shape that can be appended to a path at a given rect.
@@ -128,14 +132,14 @@ public extension BezierPath {
 public extension BezierPath {
     
     /// Add a movement to a location defined by `point`.
-    public func add(_ movement: Movement, to point: CGPoint) {
+    public func add(_ movement: Movement, to point: Point) {
         #if os(iOS)
             switch movement {
             case .move:
                 move(to: point)
             case .line:
                 addLine(to: point)
-            case .quadraticCurve(let p1):
+            case .quadCurve(let p1):
                 addQuadCurve(to: point, controlPoint: p1)
             case .cubicCurve(let p1, let p2):
                 addCurve(to: point, controlPoint1: p1, controlPoint2: p2)
@@ -146,7 +150,7 @@ public extension BezierPath {
                 move(to: point)
             case .line:
                 line(to: point)
-            case .quadraticCurve(let p1):
+            case .quadCurve(let p1):
                 curve(to: point, controlPoint1: p1, controlPoint2: p1)
             case .cubicCurve(let p1, let p2):
                 curve(to: point, controlPoint1: p1, controlPoint2: p2)
@@ -156,7 +160,7 @@ public extension BezierPath {
     
     /// Add a movement to the point defined by `x` and `y`.
     public func add(_ movement: Movement, x: CGFloat, y: CGFloat) {
-        add(movement, to: CGPoint(x: x, y: y))
+        add(movement, to: Point(x: x, y: y))
     }
     
     /// Add a movement by the vector defined by `dx` and `dy`.
@@ -190,7 +194,7 @@ public extension BezierPath {
 public extension BezierPath {
     
     /// Add a shape at a location defined by `rect`.
-    public func add(_ shape: Shape, at rect: CGRect) {
+    public func add(_ shape: Shape, at rect: Rect) {
         #if os(iOS)
             switch shape {
             case .rect:
@@ -213,22 +217,22 @@ public extension BezierPath {
     }
     
     /// Add a rect with `origin` and `size`.
-    public func add(_ shape: Shape, origin: CGPoint, size: CGSize) {
-        add(shape, at: CGRect(origin: origin, size: size))
+    public func add(_ shape: Shape, origin: Point, size: CGSize) {
+        add(shape, at: Rect(origin: origin, size: size))
     }
     
     /// Add a rect with `x`, `y`, `width` and `height`.
     public func add(_ shape: Shape, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat) {
-        add(shape, at: CGRect(x: x, y: y, width: width, height: height))
+        add(shape, at: Rect(x: x, y: y, width: width, height: height))
     }
     
     /// Add a rect with `center` and `radius`.
-    public func add(_ shape: Shape, center: CGPoint, radius: CGFloat) {
+    public func add(_ shape: Shape, center: Point, radius: CGFloat) {
         add(shape, x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
     }
     
     /// Add a rect with `center` and `size`.
-    public func add(_ shape: Shape, center: CGPoint, size: CGSize) {
+    public func add(_ shape: Shape, center: Point, size: CGSize) {
         add(shape, x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height)
     }
     
@@ -239,7 +243,7 @@ public extension BezierPath {
 public extension BezierPath {
     
     /// Add a list of points as a path.
-    public func add(_ path: Path, points: [CGPoint]) {
+    public func add(_ path: Path, points: [Point]) {
         let head = points.first
         let tail = points.suffix(from: 1)
         
