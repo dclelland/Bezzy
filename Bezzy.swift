@@ -61,6 +61,20 @@ public extension BezierPath {
         
         /// Move the current point, adding a line in the process.
         case line
+        
+        #if os(iOS)
+            /// Move the current point, adding a quadratic Bézier curve in the process.
+            case quadraticCurve(p1: CGPoint)
+        
+            /// Move the current point, adding a cubic Bézier curve in the process.
+            case cubicCurve(p1: CGPoint, p2: CGPoint)
+        #elseif os(OSX)
+            /// Move the current point, adding a quadratic Bézier curve in the process.
+            case quadraticCurve(p1: NSPoint)
+        
+            /// Move the current point, adding a cubic Bézier curve in the process.
+            case cubicCurve(p1: NSPoint, p2: NSPoint)
+        #endif
     }
     
     /// Specifies a type of shape that can be appended to a path at a given rect.
@@ -121,6 +135,10 @@ public extension BezierPath {
                 move(to: point)
             case .line:
                 addLine(to: point)
+            case .quadraticCurve(let p1):
+                addQuadCurve(to: point, controlPoint: p1)
+            case .cubicCurve(let p1, let p2):
+                addCurve(to: point, controlPoint1: p1, controlPoint2: p2)
             }
         #elseif os(OSX)
             switch movement {
@@ -128,6 +146,10 @@ public extension BezierPath {
                 move(to: point)
             case .line:
                 line(to: point)
+            case .quadraticCurve(let p1):
+                curve(to: point, controlPoint1: p1, controlPoint2: p1)
+            case .cubicCurve(let p1, let p2):
+                curve(to: point, controlPoint1: p1, controlPoint2: p2)
             }
         #endif
     }
